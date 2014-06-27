@@ -14,6 +14,10 @@ func runJobs() {
 	}
 
 	for _, job := range jobs {
-		fmt.Printf("%v %v %v %v\n", *job.Filename, job.Size, job.SizeLeft, *job.TimeLeft)
+		listRec(*job.Filename, formatSize(job.Size), formatSize(job.SizeLeft), *job.TimeLeft)
 	}
+}
+
+func formatSize(size float64) string {
+	return fmt.Sprintf("%vM", int(size))
 }
