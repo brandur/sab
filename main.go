@@ -21,10 +21,10 @@ func main() {
 	}
 
 	switch flag.Args()[0] {
-	case "histories":
-		runHistories()
-	case "jobs":
-		runJobs()
+	case "history":
+		runHistory()
+	case "queue":
+		runQueue()
 	case "status":
 		runStatus()
 	default:

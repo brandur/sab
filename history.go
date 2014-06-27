@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func runHistories() {
+func runHistory() {
 	needApiKey()
 
 	client := newSabClient(*url, *apiKey)

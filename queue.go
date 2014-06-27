@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func runJobs() {
+func runQueue() {
 	needApiKey()
 
 	client := newSabClient(*url, *apiKey)
