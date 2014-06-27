@@ -22,7 +22,9 @@ func main() {
 
 	switch flag.Args()[0] {
 	case "jobs":
-		jobs()
+		runJobs()
+	case "status":
+		runStatus()
 	}
 }
 

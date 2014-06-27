@@ -4,14 +4,16 @@ import (
 	"fmt"
 )
 
-func jobs() {
+func runJobs() {
 	needApiKey()
 
 	client := newSabClient(url, apiKey)
-	thing, err := client.getJobs()
+	jobs, err := client.getJobs()
 	if err != nil {
 		printFatal("api request: %v", err.Error())
 	}
 
-	fmt.Printf("data: %+v\n", thing)
+	for _, job := range jobs {
+		fmt.Printf("%v %v %v %v\n", *job.Filename, job.Size, job.SizeLeft, *job.TimeLeft)
+	}
 }
