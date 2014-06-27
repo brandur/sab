@@ -25,16 +25,16 @@ type jobs struct {
 }
 
 type sabClient struct {
-	apiKey     *string
+	apiKey     string
 	httpClient *http.Client
-	url        *string
+	url        string
 }
 
 type status struct {
 	State *string `json:"state"`
 }
 
-func newSabClient(url *string, apiKey *string) *sabClient {
+func newSabClient(url string, apiKey string) *sabClient {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -46,7 +46,7 @@ func newSabClient(url *string, apiKey *string) *sabClient {
 }
 
 func (c *sabClient) buildApiUrl(mode string) string {
-	url := fmt.Sprintf("%v/api?mode=%v&output=json&apikey=%v", *c.url, mode, *c.apiKey)
+	url := fmt.Sprintf("%v/api?mode=%v&output=json&apikey=%v", c.url, mode, c.apiKey)
 	printDebug("url: %v", url)
 	return url
 }

@@ -7,7 +7,7 @@ import (
 func runJobs() {
 	needApiKey()
 
-	client := newSabClient(url, apiKey)
+	client := newSabClient(*url, *apiKey)
 	jobs, err := client.getJobs()
 	if err != nil {
 		printFatal("api request: %v", err.Error())
