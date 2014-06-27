@@ -28,14 +28,18 @@ type historiesInner struct {
 }
 
 type job struct {
-	Filename *string `json:"filename"`
-	Size     float64 `json:"mb"`
-	SizeLeft float64 `json:"mbleft"`
-	TimeLeft *string `json:"timeleft"`
+	Filename   *string `json:"filename"`
+	Percentage *string `json:"percentage"`
+	Size       *string `json:"mb"`
+	Status     *string `json:"status"`
 }
 
 type jobs struct {
-	Jobs []*job `json:"jobs"`
+	Inner *jobsInner `json:"queue"`
+}
+
+type jobsInner struct {
+	Jobs []*job `json:"slots"`
 }
 
 type sabClient struct {
@@ -87,7 +91,7 @@ func (c *sabClient) getHistories(limit int) ([]*history, error) {
 }
 
 func (c *sabClient) getJobs() ([]*job, error) {
-	url := c.buildApiUrl("qstatus", "")
+	url := c.buildApiUrl("queue", "")
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -104,7 +108,7 @@ func (c *sabClient) getJobs() ([]*job, error) {
 		return nil, err
 	}
 
-	return j.Jobs, nil
+	return j.Inner.Jobs, nil
 }
 
 func (c *sabClient) getStatus() (*status, error) {

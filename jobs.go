@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 func runJobs() {
@@ -14,10 +16,14 @@ func runJobs() {
 	}
 
 	for _, job := range jobs {
-		listRec(*job.Filename, formatSize(job.Size), formatSize(job.SizeLeft), *job.TimeLeft)
+		listRec(strings.ToLower(*job.Status), formatSize(job), *job.Percentage+"%", *job.Filename)
 	}
 }
 
-func formatSize(size float64) string {
+func formatSize(j *job) string {
+	size, err := strconv.ParseFloat(*j.Size, 64)
+	if err != nil {
+		panic(err)
+	}
 	return fmt.Sprintf("%vM", int(size))
 }

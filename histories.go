@@ -15,7 +15,7 @@ func runHistories() {
 	}
 
 	for _, history := range histories {
-		listRec(*history.Name, strings.ToLower(*history.Status), prettySize(history.Size))
+		listRec(strings.ToLower(*history.Status), prettySize(history.Size), *history.Name)
 	}
 }
 
