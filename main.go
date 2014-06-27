@@ -25,6 +25,8 @@ func main() {
 		runJobs()
 	case "status":
 		runStatus()
+	default:
+		printError("unknown command: %s", flag.Args()[0])
 	}
 }
 

@@ -50,20 +50,9 @@ func (c *sabClient) getJobs() ([]*job, error) {
 	printDebug("url: %v", url)
 
 	resp, err := c.httpClient.Get(url)
-
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := readAndCheck(resp)
 	if err != nil {
-		panic(err)
-	}
-
-	var e *apiError
-	err = json.Unmarshal(data, &e)
-	if err != nil {
-		panic(err)
-	}
-
-	if e.Message != nil {
-		return nil, errors.New(*e.Message)
+		return nil, err
 	}
 
 	var j jobs
@@ -76,7 +65,17 @@ func (c *sabClient) getStatus() (*status, error) {
 	printDebug("url: %v", url)
 
 	resp, err := c.httpClient.Get(url)
+	data, err := readAndCheck(resp)
+	if err != nil {
+		return nil, err
+	}
 
+	var s status
+	err = json.Unmarshal(data, &s)
+	return &s, nil
+}
+
+func readAndCheck(resp *http.Response) ([]byte, error) {
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
@@ -91,8 +90,5 @@ func (c *sabClient) getStatus() (*status, error) {
 	if e.Message != nil {
 		return nil, errors.New(*e.Message)
 	}
-
-	var s status
-	err = json.Unmarshal(data, &s)
-	return &s, nil
+	return data, nil
 }
