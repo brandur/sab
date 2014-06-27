@@ -14,8 +14,9 @@ type apiError struct {
 }
 
 type history struct {
-	Name *string `json:"name"`
-	Size int     `json:"bytes"`
+	Name   *string `json:"name"`
+	Size   int     `json:"bytes"`
+	Status *string `json:"status"`
 }
 
 type histories struct {

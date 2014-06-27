@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 func runStatus() {
@@ -13,5 +14,5 @@ func runStatus() {
 		printFatal("api request: %v", err.Error())
 	}
 
-	fmt.Printf("State: %v\n", *status.State)
+	fmt.Printf("State: %v\n", strings.ToLower(*status.State))
 }

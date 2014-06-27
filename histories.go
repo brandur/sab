@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 func runHistories() {
@@ -14,7 +15,7 @@ func runHistories() {
 	}
 
 	for _, history := range histories {
-		listRec(*history.Name, prettySize(history.Size))
+		listRec(*history.Name, strings.ToLower(*history.Status), prettySize(history.Size))
 	}
 }
 
