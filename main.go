@@ -21,6 +21,8 @@ func main() {
 	}
 
 	switch flag.Args()[0] {
+	case "histories":
+		runHistories()
 	case "jobs":
 		runJobs()
 	case "status":

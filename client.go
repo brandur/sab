@@ -13,6 +13,19 @@ type apiError struct {
 	Message *string `json:"error"`
 }
 
+type history struct {
+	Name *string `json:"name"`
+	Size int     `json:"bytes"`
+}
+
+type histories struct {
+	Inner *historiesInner `json:"history"`
+}
+
+type historiesInner struct {
+	Histories []*history `json:"slots"`
+}
+
 type job struct {
 	Filename *string `json:"filename"`
 	Size     float64 `json:"mb"`
@@ -45,14 +58,35 @@ func newSabClient(url string, apiKey string) *sabClient {
 	}
 }
 
-func (c *sabClient) buildApiUrl(mode string) string {
-	url := fmt.Sprintf("%v/api?mode=%v&output=json&apikey=%v", c.url, mode, c.apiKey)
+func (c *sabClient) buildApiUrl(mode string, extra string) string {
+	url := fmt.Sprintf("%v/api?mode=%v&output=json&apikey=%v&%v", c.url, mode, c.apiKey, extra)
 	printDebug("url: %v", url)
 	return url
 }
 
+func (c *sabClient) getHistories(limit int) ([]*history, error) {
+	url := c.buildApiUrl("history", fmt.Sprintf("limit=%v", limit))
+	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := readAndCheck(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var h histories
+	err = json.Unmarshal(data, &h)
+	if err != nil {
+		return nil, err
+	}
+
+	return h.Inner.Histories, nil
+}
+
 func (c *sabClient) getJobs() ([]*job, error) {
-	url := c.buildApiUrl("qstatus")
+	url := c.buildApiUrl("qstatus", "")
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -65,11 +99,15 @@ func (c *sabClient) getJobs() ([]*job, error) {
 
 	var j jobs
 	err = json.Unmarshal(data, &j)
+	if err != nil {
+		return nil, err
+	}
+
 	return j.Jobs, nil
 }
 
 func (c *sabClient) getStatus() (*status, error) {
-	url := c.buildApiUrl("qstatus")
+	url := c.buildApiUrl("qstatus", "")
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
 		return nil, err
@@ -82,6 +120,10 @@ func (c *sabClient) getStatus() (*status, error) {
 
 	var s status
 	err = json.Unmarshal(data, &s)
+	if err != nil {
+		return nil, err
+	}
+
 	return &s, nil
 }
 
