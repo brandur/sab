@@ -45,11 +45,19 @@ func newSabClient(url *string, apiKey *string) *sabClient {
 	}
 }
 
-func (c *sabClient) getJobs() ([]*job, error) {
-	url := fmt.Sprintf("%v/api?mode=qstatus&output=json&apikey=%v", *c.url, *c.apiKey)
+func (c *sabClient) buildApiUrl(mode string) string {
+	url := fmt.Sprintf("%v/api?mode=%v&output=json&apikey=%v", *c.url, mode, *c.apiKey)
 	printDebug("url: %v", url)
+	return url
+}
 
+func (c *sabClient) getJobs() ([]*job, error) {
+	url := c.buildApiUrl("qstatus")
 	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
 	data, err := readAndCheck(resp)
 	if err != nil {
 		return nil, err
@@ -61,10 +69,12 @@ func (c *sabClient) getJobs() ([]*job, error) {
 }
 
 func (c *sabClient) getStatus() (*status, error) {
-	url := fmt.Sprintf("%v/api?mode=qstatus&output=json&apikey=%v", *c.url, *c.apiKey)
-	printDebug("url: %v", url)
-
+	url := c.buildApiUrl("qstatus")
 	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
 	data, err := readAndCheck(resp)
 	if err != nil {
 		return nil, err
