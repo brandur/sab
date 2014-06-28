@@ -75,88 +75,48 @@ func (c *sabClient) buildApiUrl(mode string, extra string) string {
 }
 
 func (c *sabClient) getHistories(limit int) ([]*history, error) {
-	url := c.buildApiUrl("history", fmt.Sprintf("limit=%v", limit))
-	resp, err := c.httpClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := readAndCheck(resp)
-	if err != nil {
-		return nil, err
-	}
-
 	var h histories
-	err = json.Unmarshal(data, &h)
-	if err != nil {
-		return nil, err
-	}
-
-	return h.Inner.Histories, nil
+	err := c.apiCall("history", fmt.Sprintf("limit=%v", limit), &h)
+	return h.Inner.Histories, err
 }
 
 func (c *sabClient) getJobs() ([]*job, error) {
-	url := c.buildApiUrl("queue", "")
-	resp, err := c.httpClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := readAndCheck(resp)
-	if err != nil {
-		return nil, err
-	}
-
 	var j jobs
-	err = json.Unmarshal(data, &j)
-	if err != nil {
-		return nil, err
-	}
-
-	return j.Inner.Jobs, nil
+	err := c.apiCall("queue", "", &j)
+	return j.Inner.Jobs, err
 }
 
 func (c *sabClient) getStatus() (*status, error) {
-	url := c.buildApiUrl("qstatus", "")
-	resp, err := c.httpClient.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := readAndCheck(resp)
-	if err != nil {
-		return nil, err
-	}
-
 	var s status
-	err = json.Unmarshal(data, &s)
-	if err != nil {
-		return nil, err
-	}
-
-	return &s, nil
+	err := c.apiCall("qstatus", "", &s)
+	return &s, err
 }
 
 func (c *sabClient) pause() (*action, error) {
-	url := c.buildApiUrl("pause", "")
+	var a action
+	err := c.apiCall("pause", "", &a)
+	return &a, err
+}
+
+func (c *sabClient) apiCall(mode string, extra string, t interface{}) error {
+	url := c.buildApiUrl(mode, extra)
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	data, err := readAndCheck(resp)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var a action
-	err = json.Unmarshal(data, &a)
+	err = json.Unmarshal(data, &t)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	printDebug("response: %+v", a)
+	printDebug("response: %+v", t)
 
-	return &a, nil
+	return nil
 }
 
 func readAndCheck(resp *http.Response) ([]byte, error) {
