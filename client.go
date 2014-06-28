@@ -98,6 +98,18 @@ func (c *sabClient) pause() (*action, error) {
 	return &a, err
 }
 
+func (c *sabClient) resume() (*action, error) {
+	var a action
+	err := c.apiCall("resume", "", &a)
+	return &a, err
+}
+
+func (c *sabClient) shutdown() (*action, error) {
+	var a action
+	err := c.apiCall("shutdown", "", &a)
+	return &a, err
+}
+
 func (c *sabClient) apiCall(mode string, extra string, t interface{}) error {
 	url := c.buildApiUrl(mode, extra)
 	resp, err := c.httpClient.Get(url)

@@ -27,6 +27,10 @@ func main() {
 		runPause()
 	case "queue":
 		runQueue()
+	case "resume":
+		runResume()
+	case "shutdown":
+		runShutdown()
 	case "status":
 		runStatus()
 	default:
