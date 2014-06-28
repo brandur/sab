@@ -105,21 +105,6 @@ func (c *sabClient) apiCall(mode string, extra string, t interface{}) error {
 		return err
 	}
 
-	data, err := readAndCheck(resp)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(data, &t)
-	if err != nil {
-		return err
-	}
-	printDebug("response: %+v", t)
-
-	return nil
-}
-
-func readAndCheck(resp *http.Response) ([]byte, error) {
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
@@ -130,9 +115,17 @@ func readAndCheck(resp *http.Response) ([]byte, error) {
 	if err != nil {
 		panic(err)
 	}
+	printDebug("error check: %+v", t)
 
 	if e.Message != nil {
-		return nil, errors.New(*e.Message)
+		return errors.New(*e.Message)
 	}
-	return data, nil
+
+	err = json.Unmarshal(data, &t)
+	if err != nil {
+		return err
+	}
+	printDebug("response: %+v", t)
+
+	return nil
 }
