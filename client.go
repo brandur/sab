@@ -9,6 +9,11 @@ import (
 	"net/http"
 )
 
+// used for pause, resume, and shutdown
+type action struct {
+	Status bool `json:"status"`
+}
+
 type apiError struct {
 	Message *string `json:"error"`
 }
@@ -130,6 +135,28 @@ func (c *sabClient) getStatus() (*status, error) {
 	}
 
 	return &s, nil
+}
+
+func (c *sabClient) pause() (*action, error) {
+	url := c.buildApiUrl("pause", "")
+	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := readAndCheck(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var a action
+	err = json.Unmarshal(data, &a)
+	if err != nil {
+		return nil, err
+	}
+	printDebug("response: %+v", a)
+
+	return &a, nil
 }
 
 func readAndCheck(resp *http.Response) ([]byte, error) {

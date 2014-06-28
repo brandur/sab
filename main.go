@@ -23,6 +23,8 @@ func main() {
 	switch flag.Args()[0] {
 	case "history":
 		runHistory()
+	case "pause":
+		runPause()
 	case "queue":
 		runQueue()
 	case "status":
